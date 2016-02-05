@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		 <meta charset="UTF-8" />
+		 <title>Tester l'incroyable OS MINIX</title>
+	</head>
+	<body>
+		<h1>Tester l'incroyable OS MINIX</h1>
+		
+		<p>MINIX est un système d&#8217;exploitation à micro-noyau sûr, fiable, gratuit, libre, open-source. Ici, nous le testerons avec VirtualBox sous un système GNU/Linux.</p>
+
+<h2 id='1_installation_de_virtualbox'>1. Installation de VirtualBox</h2>
+
+<p>Il vous suffit d&#8217;inscrire cette commande dans un terminal :<br /><code>sudo apt-get install virtualbox</code></p>
+
+<p>Pour lancer VirtualBox, vous pouvez simplement taper:<br /><code>virtualbox</code></p>
+
+<h2 id='2_cration_de_la_machine_virtuelle'>2. Création de la machine virtuelle</h2>
+
+<p>Une fois VirtualBox ouvert, cliquez sur &#8220;Nouvelle&#8221;.</p>
+
+<p>Écrivez par exemple MINIX3 dans la zone &#8220;Nom&#8221;, sélectionnez &#8220;Other&#8221; pour &#8220;Type&#8221; et &#8220;Other/Unknown&#8221; ou &#8220;Other/Unknown (64-bits)&#8221; pour &#8220;Version&#8221;.</p>
+
+<p>Cliquez sur &#8220;Suivant&#8221; et choisissez la quantité de RAM. La valeur par défaut est de 64Mio, vous pouvez la laisser si vous n&#8217;avez pas beaucoup de RAM, mais je vous conseille plutôt 0.5Gio (soit 500Mio) pour pouvoir faire fonctionner des programmes très gourmands en mémoire (par exemple, les algorithmes mathématiques qui stockent de longues tables dans la mémoire).</p>
+
+<p>Cliquez à nouveau sur &#8220;Suivant&#8221; et cliquez sur &#8220;Créer un disque dur virtuel maintenant&#8221;, cliquez encore une fois sur &#8220;Suivant&#8221;, cochez &#8220;VDI&#8221; (qui est normalement sélectionné par défaut), cliquez sur &#8220;Suivant&#8221;.</p>
+
+<p>Vous pouvez maintenant choisir de créer un disque dur fixe ou dynamique. Si vous ne savez pas trop ce que vous faites je vous conseille de laisser dynamique. La valeur par défaut est de 2 Gio, mais je vous recommande vivement de choisir au moins 10 Gio (surtout si vous êtes en stockage dynamique, puisque le disque s&#8217;agrandira tout seul jusqu&#8217;à atteindre sa taille maximale).</p>
+
+<p>Pour finir, cliquez sur &#8220;Créer&#8221;.</p>
+
+<h2 id='3_mise_en_place_de_limage_de_minix3_sur_la_machine_virtuelle'>3. Mise en place de l&#8217;image de MINIX3 sur la machine virtuelle</h2>
+
+<p>Maintenant, rendez-vous sur la <a href='http://wiki.minix3.org/doku.php?id=www:download:start'>page de téléchargement</a> de MINIX3, et prenez l&#8217;image correspondant à votre architecture (la plupart des ordinateurs &#8220;habituels&#8221; ont un CPU x86, <a href='http://download.minix3.org/iso/minix_R3.3.0-588a35b.iso.bz2'>ce lien</a> devrait donc être tout à fait utilisable dans la plupart des cas). Vous devez ensuite la décompresser (vous pouvez pour cela utiliser le bouton &#8220;Extraire&#8221; présent sur la plupart des logiciels capables de lire des archivez .bz2, tels que XArchiver).</p>
+
+<p>Dans la liste de VirtualBox, sélectionnez MINIX3 et cliquez sur le bouton &#8220;Démarrer&#8221;. On vous demande maintenant de choisir un disque de démarrage. Cliquez sur le bouton &#8220;Parcourir&#8221; à droite de la zone de texte, et ouvrez votre image .iso extraite. Cliquez sur &#8220;Ouvrir&#8221;.</p>
+
+<h2 id='4_installation_de_minix3'>4. Installation de MINIX3</h2>
+
+<p>MINIX3 devrait maintenant être en train de se lancer. Attendez jusqu&#8217;à ce qu&#8217;il vous demande &#8220;login:&#8221; (cela peut prendre un peu de temps). Répondez en écrivant &#8220;root&#8221;, puis pressez &#8220;Entrez&#8221;.</p>
+
+<p>Entrez maintenant &#8220;setup&#8221; (et, bien sûr, pressez &#8220;Entrée&#8221;). Après avoir lu les notes (si vous parlez anglais), pressez à nouveau &#8220;Entrée&#8221;.</p>
+
+<h3 id='41_le_clavier'>4.1. Le clavier</h3>
+
+<p>Si vous lisez ce tutoriel en français, il est probable que vous soyez en France. Si c&#8217;est le cas, inscrivez &#8220;french&#8221; et pressez &#8220;Entrée&#8221;. Cependant, si vous êtes par exemple en Suisse ou au Canada et que vous avez un clavier QWERTY, pressez &#8220;Entrée&#8221; sans rien écrire (votre clavier sera alors laissé en &#8220;us-std&#8221;).</p>
+
+<h3 id='42_crer_une_partition_pour_minix3'>4.2. Créer une partition pour MINIX3</h3>
+
+<p>Pressez &#8220;Entrée&#8221; lorsqu&#8217;on vous demande si vous un expert ou non, afin d&#8217;être en mode automatique (de toute façon, même si vous êtes un expert, sur un disque dur virtuel vierge, le mode expert ne vous apportera strictement rien de plus que le mode automatique, il sera simplement plus complexe).</p>
+
+<p>On vous demande ensuite de sélectionner le disque voulu, normalement il n&#8217;y en a qu&#8217;un, pressez donc &#8220;Entrée&#8221; sans rien écrire pour continuer. Faites de même lorsque qu&#8217;on vous demande la partition.</p>
+
+<p>Vous devriez normalement lire &#8220;This is the point of no return&#8221;. En vérité, sur une machine virtuelle, ce n&#8217;est pas totalement vrai, vous pourrez la supprimer et la réinstaller (ou pas). Écrivez &#8220;yes&#8221; et pressez &#8220;Entrée&#8221;.</p>
+
+<p>On vous demande ensuite la taille du &#8220;/home&#8221;, ce qui correspond au dossier où seront stockées tous les fichiers de utilisateurs. Vous pouvez laisser la valeur par défaut en pressant &#8220;Entrée&#8221; (cette valeur laisse beaucoup de place au &#8220;/usr&#8221;, ce qui correspond à l&#8217;endroit où sont stockés tous les programmes). Confirmez ensuite en pressant &#8220;Entrée&#8221;.</p>
+
+<p>Vous devez maintenant choisir la &#8220;block size&#8221;, laissez la valeur par défaut qui est très bien et soyez gentils de ne pas me demander à quoi ça correspond :&gt;</p>
+
+<h3 id='43_copie_des_fichiers'>4.3. Copie des fichiers</h3>
+
+<p>Maintenant, MINIX3 copie tous les fichiers depuis l&#8217;image jusqu&#8217;au disque. Cette étape de l&#8217;installation de MINIX3 est beaucoup moins longue que celle des gros systèmes plus connus comme GNU/Linux, BSD ou encore le champion toutes catégories des poids lourds Windows.</p>
+
+<h3 id='44_configuration_du_rseau'>4.4. Configuration du réseau</h3>
+
+<p>MINIX3 vous demande maintenant le type de carte réseau qu&#8217;il doit utiliser. Je vous conseille de choisir la carte &#8220;AMD LANCE&#8221;, puisque c&#8217;est celle qui est émulée par VirtualBox. Il s&#8217;agit normalement du choix par défaut, pressez donc &#8220;Entrée&#8221; sans rien écrire.</p>
+
+<p>On vous demande maintenant si vous voulez que l&#8217;adresse IP de votre ordinateur (selon MINIX3 bien sûr, puisque vous êtes sur une machine virtuelle) soit statique ou choisie par DHCP. Si vous ne savez pas ce que c&#8217;est laissez 1, mais vous pouvez tout à fait choisir 2 (ce qui vous demandera de remplir quelques champs supplémentaires, mais en général les valeurs par défaut vous conviendront (pour la &#8220;gateway&#8221; il n&#8217;y a pas de valeur par défaut, mais dans la plupart des cas c&#8217;est 192.168.1.1)).</p>
+
+<h3 id='45_redmarrage'>4.5. Redémarrage</h3>
+
+<p>C&#8217;est enfin la fin de l&#8217;exécution de la commande &#8220;setup&#8221;, et vous redonne un prompt (&#8221;#&#8221;). Inscrivez &#8220;poweroff&#8221; et pressez &#8220;Entrée&#8221; afin d&#8217;éteindre la machine virtuelle.</p>
+
+<h2 id='5_supprimer_limage_de_minix3'>5. Supprimer l&#8217;image de MINIX3</h2>
+
+<p>Il ne faut plus que la machine démarre sur l&#8217;image .iso que vous lui avez donné pour l&#8217;installer, mais sur le disque dur lui-même, à présent ! Nous allons donc la supprimer (exactement comme si nous enlevions un CD-ROM d&#8217;installation, et en réalité, pour MINIX3, c&#8217;est exactement ce qui se passe).</p>
+
+<p>Dans la fenêtre de VirtualBox, sélectionnez la machine &#8220;MINIX3&#8221;, et cliquez sur &#8220;Configuration&#8221;.</p>
+
+<p>Dans la liste de gauche de la fenêtre qui vient d&#8217;apparaître, cliquez sur &#8220;Stockage&#8221;, puis sélectionnez votre image de MINIX3 (dont le nom doit ressembler à &#8220;minix_R3&#8230;iso&#8221;). Cliquez maintenant sur le petit bouton &#8220;supprimer&#8221; en bas de la liste.</p>
+
+<p>Cliquez ensuite sur &#8220;Ok&#8221;.</p>
+
+<h2 id='6_installation_termine_'>6. Installation terminée !</h2>
+
+<p>Vous pouvez maintenant relancer la machine en cliquant sur &#8220;Démarrer&#8221;. Éteignez-la en entrant toujours la commande &#8220;poweroff&#8221;.</p>
+
+<p>Vous pouvez aller voir la <a href='http://wiki.minix3.org/doku.php?id=www:documentation:start'>documentation de MINIX3</a> (en anglais&#8230;) !</p>
+
+<p>Vous verrez que cet incroyable système a plus d&#8217;une qualité, la première étant d&#8217;être incroyablement petit, ce qui vous permet de l&#8217;étudier à volonté.</p>
+
+		<div class="footer">
+			<p> paly2's blog. <br />
+			Mail: <a href="mailto:plangrognet@laposte.net">plangrognet@laposte.net</a> <br />
+			GitHub: <a href="https://github.com/paly2">github.com/paly2</a>
+		</div>
+	</body>
+</html>
