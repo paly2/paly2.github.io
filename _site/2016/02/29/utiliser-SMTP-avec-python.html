@@ -7,165 +7,181 @@
 	<body>
 		<h1>Utiliser SMTP avec python (et apprendre à l'implémenter pour d'autres langages) pour envoyer des e-mails</h1>
 		
-		<p>Le protocle SMTP permet de communiquer avec un serveur&#8230; SMTP pour envoyer des e-mails. Vous vous êtes peut-être déjà demandé comment envoyer automatiquement des messages depuis un programme : c&#8217;est ce que nous allons faire en utilisant le module python <code>smtplib</code> et en comprenant le fonctionnement du protocole pour le rendre facile à implémenter dans d&#8217;autres langages (sans utiliser de bibliothèque), voire pour ré-implémenter le module python <code>smtplib</code>.</p>
+		<p>Le protocle SMTP permet de communiquer avec un serveur… SMTP pour envoyer des e-mails. Vous vous êtes peut-être déjà demandé comment envoyer automatiquement des messages depuis un programme : c’est ce que nous allons faire en utilisant le module python <code class="highlighter-rouge">smtplib</code> et en comprenant le fonctionnement du protocole pour le rendre facile à implémenter dans d’autres langages (sans utiliser de bibliothèque), voire pour ré-implémenter le module python <code class="highlighter-rouge">smtplib</code>.</p>
 
-<h1 id='1_le_serveur_smtp'>1. Le serveur SMTP</h1>
+<h1 id="le-serveur-smtp">1. Le serveur SMTP</h1>
 
-<p>Puisque vous voulez envoyer un message, je me permets de supposer que vous disposez de l&#8217;adresse e-mail du destinataire. Elle se termine en <code>@&lt;nom_de_domaine&gt;</code>. Exemples de noms de domaines: <code>gmail.com</code>, <code>sfr.fr</code>, <code>laposte.net</code>&#8230; Ils disposent de sous-domaine, c&#8217;est-à-dire d&#8217;un &#8220;mot&#8221; supplémentaire à l&#8217;avant séparé du domaine principal par un point.</p>
+<p>Puisque vous voulez envoyer un message, je me permets de supposer que vous disposez de votre adresse e-mail. Elle se termine en <code class="highlighter-rouge">@&lt;nom_de_domaine&gt;</code>. Exemples de noms de domaines: <code class="highlighter-rouge">gmail.com</code>, <code class="highlighter-rouge">sfr.fr</code>, <code class="highlighter-rouge">laposte.net</code>… Ils possèdent des sous-domaines, c’est-à-dire des “mots” supplémentaires au début séparé du domaine principal par un point.</p>
 
-<p>Pour recevoir des e-mails depuis un serveur, on utilise un serveur POP3 (avec généralement donc le sous-domaine pop, donc par exemple pour gmail <code>pop.gmail.com</code> (bien que <code>pop.gmail.com</code> soit <em>aussi</em> un serveur SMTP, mais bon, c&#8217;est parce que chez Google ils ne savent plus dans quel serveur ils tombent tellement ils en ont).</p>
+<p>Pour recevoir des e-mails depuis un serveur, on utilise le protocole POP3, qui s’accompagne comme toujours d’un serveur (avec généralement donc le sous-domaine pop, donc par exemple pour gmail <code class="highlighter-rouge">pop.gmail.com</code> (bien que <code class="highlighter-rouge">pop.gmail.com</code> soit <em>aussi</em> un serveur SMTP, mais bon, c’est parce que chez Google ils ne savent plus dans quel serveur ils tombent tellement ils en ont)).</p>
 
-<p>Mais ce qui nous intéresse dans notre cas, c&#8217;est d&#8217;envoyer des e-mails, et pour trouver l&#8217;adresse d&#8217;un serveur SMTP, utilisez le sous-domaine en <code>smtp.</code> et <em>inmanquablement</em> ça marchera (ou du moins, je n&#8217;ai jamais vu de cas contraire).</p>
+<p>Mais ce qui nous intéresse dans notre cas, c’est d’envoyer des e-mails, et pour trouver l’adresse d’un serveur SMTP, utilisez le sous-domaine en <code class="highlighter-rouge">smtp.</code> et <em>inmanquablement</em> ça marchera (ou du moins, je n’ai jamais vu de cas contraire).</p>
 
-<p>Revenons à notre programme. Si vous disposez de l&#8217;adresse e-mail, en Python, vous pouvez récupérer le nom de domaine ainsi (la variable <code>email_adress</code> contient l&#8217;adresse e-mail du destinataire, au cas où quelqu&#8217;un ne l&#8217;aurait pas déduit tout seul):</p>
+<p>Revenons à notre programme. Si vous disposez de l’adresse e-mail, en Python, vous pouvez récupérer le nom de domaine de cette façon (la variable <code class="highlighter-rouge">email_adress</code> contient votre adresse e-mail, au cas où quelqu’un ne l’aurait pas déduit tout seul):</p>
 
-<p><code>domain_name = email_adress.split(&#39;@&#39;)[1]</code><br /><code>smtp_server_name = &#39;smtp.&#39;+domain_name</code></p>
+<p><code class="highlighter-rouge">domain_name = email_adress.split('@')[1]</code><br />
+<code class="highlighter-rouge">smtp_server_name = 'smtp.'+domain_name</code></p>
 
-<p>N&#8217;oubliez pas que je vous montre en python, mais que rien ne vous empêche de le faire dans un autre langage ! En C par exemple, ce serait plutôt (il faut que <code>string.h</code> soit inclu, ne l&#8217;oubliez pas si vous utilisez ce bout de code):</p>
+<p>N’oubliez pas que je vous montre en python, mais que rien ne vous empêche de le faire dans un autre langage ! En C par exemple, ce serait plutôt (il faut que <code class="highlighter-rouge">string.h</code> soit inclu pour les fonctions <code class="highlighter-rouge">strchr()</code> et <code class="highlighter-rouge">strcat()</code>, ne l’oubliez pas si vous utilisez ce bout de code):</p>
 
-<p><code>char* domain_name = NULL;</code><br /><code>char smtp_server_name[1000] = &quot;smtp.&quot;;</code><br /><code>domain_name = strchr(email_adress, &#39;@&#39;)+1;</code><br /><code>strcat(smtp_server_name, domain_name);</code></p>
+<p><code class="highlighter-rouge">char* domain_name = NULL;</code><br />
+<code class="highlighter-rouge">char smtp_server_name[1000] = "smtp.";</code><br />
+<code class="highlighter-rouge">domain_name = strchr(email_adress, '@')+1;</code><br />
+<code class="highlighter-rouge">strcat(smtp_server_name, domain_name);</code></p>
 
-<h1 id='2_qui_suisje_'>2. Qui suis-je ?</h1>
+<h1 id="qui-suis-je-">2. Qui suis-je ?</h1>
 
-<h2 id='21_mon_adresse_ip'>2.1. Mon adresse IP</h2>
+<h2 id="mon-adresse-ip">2.1. Mon adresse IP</h2>
 
-<p>La première commande SMTP envoyée au serveur contient notre adresse IP. Mais comment la connaître, me demanderez-vous ? Eh bien, on pourrait se rendre sur un site comme <a href='whatismyip.com'>celui-là</a>, mais si vous n&#8217;avez pas une IP statique, ça risque de changer si vous redémarrez votre routeur.<br />Mais en fait, cette IP n&#8217;est pas d&#8217;une importance capitale. Si vous envoyez <code>127.0.0.1</code> ou <code>localhost</code>, qui correspond normalement à votre boucle locale (en gros, si vous dites au serveur SMTP &#8220;Je suis moi !&#8221;), ça marchera très bien et il ne devrait pas plus vous embêter (mais s&#8217;il le fait quand même, alors vous serez obligé de connaître votre vraie IP publique).</p>
+<p>La première commande SMTP envoyée au serveur contient notre adresse IP. Mais comment la connaître, me demanderez-vous ? Eh bien, on pourrait se rendre sur un site comme <a href="https://www.whatismyip.com">celui-là</a>, mais si vous n’avez pas une IP statique, ça risque de changer si vous redémarrez votre routeur.<br />
+Mais en fait, cette IP n’est pas d’une importance capitale. Si vous envoyez <code class="highlighter-rouge">127.0.0.1</code> ou <code class="highlighter-rouge">localhost</code>, qui correspond normalement à votre boucle locale (en gros, si vous dites au serveur SMTP “Je suis moi !”), ça marchera très bien et il ne devrait pas plus vous embêter (mais s’il le fait quand même, alors vous serez obligé de connaître votre vraie IP publique).</p>
 
-<p>Pour le moment, on va se contenter donc de : votre IP = 127.0.0.1 (sauf si votre serveur SMTP refuse vraiment).</p>
+<p>Pour le moment, on va se donc contenter de : votre IP = 127.0.0.1 (sauf si votre serveur SMTP refuse vraiment).</p>
 
-<h2 id='22_mon_adresse_email'>2.2. Mon adresse e-mail</h2>
+<h2 id="mon-adresse-e-mail">2.2. Mon adresse e-mail</h2>
 
-<p>Théoriquement, un serveur SMTP n&#8217;est pas obligé de vous demander votre adresse e-mail, mais en pratique, il est quasiment impossible de faire sans. Vous aurez donc besoin d&#8217;une adresse e-mail. Mais si vous contiez rester anonyme, ne vous inquiétez pas, normalement ça marche même si l&#8217;adresse e-mail que vous donnez n&#8217;existe pas :&#187;</p>
+<p>Vous avez bien sûr besoin d’une adresse e-mail (la même que celle du chapitre 1.) pour envoyer des messages.</p>
 
-<h2 id='23_authentification_'>2.3. Authentification ?!</h2>
+<h2 id="authentification-">2.3. Authentification ?!</h2>
 
-<p>Ici, ça peut commencer à se corser. Soit le port 25 de votre serveur est ouvert et si vous l&#8217;employez <em>et que le serveur respecte les normes</em> (deuxième condition qui n&#8217;est malheuresement pas toujours le cas&#8230;), pour n&#8217;aurez pas besoin d&#8217;authentification et vous pouvez passer à l&#8217;étape suivante. Mais si vous êtes obligé d&#8217;employer le port 587 (ou 465, mais on en reparlera plus tard de celui-là), vous devrez vous authentifier.<br />Si vous n&#8217;avez pas de compte chez votre serveur SMTP, vous devrez en créer un. Et là, pfiouuu, finis tous les espoirs de rester anonyme (désolé&#8230;) ; mais c&#8217;est pas si grave, vous n&#8217;avez qu&#8217;à remplir votre questionnaire de fausses informations si vraiment vous tenez à l&#8217;anonymat pour une raison obscure&#8230;</p>
+<p>Ici, ça peut commencer à se corser. Soit le port 25 de votre serveur est ouvert et si vous l’employez <em>et que le serveur respecte les normes</em> (deuxième condition qui n’est malheuresement pas toujours respectée…), vous n’aurez pas besoin d’authentification et vous pouvez passer à l’étape suivante. Mais si vous êtes obligé d’employer le port 587 (ou 465, mais on en reparlera plus tard de celui-là), vous devrez vous authentifier.<br />
+Si vous n’avez pas de compte chez votre serveur SMTP, vous devrez en créer un. Par exemple, si vous souhaitez utiliser une adresse e-mail en <code class="highlighter-rouge">@laposte.net</code>, allez sur <a href="https://www.laposte.net/accueil">laposte.net</a> et cliquez sur “Créer votre boîte mail”.</p>
 
-<p>Vous devrez donc obtenir un mot de passe et un indentifiant. Ensuite, si vous voulez implémenter un client SMTP <strong>dans un autre langage sans utiliser le module python smtplib</strong>, il va falloir les encoder en base64. Ça tombe bien, en python on a une fonction toute faite (même si ça ne nous servira pas parce que en python on a déjà la bibliothèque <code>smtplib</code>, c&#8217;est juste pour vous montrer. Je vous invite à en apprendre plus sur l&#8217;encodage base64 <a href='https://fr.wikipedia.org/wiki/Base64'>ici</a>). Dans le code suivant, les variables <code>username</code> et <code>password</code> contiennent respectivement votre nom d&#8217;utilisateur et votre mot de passe:</p>
+<p>Vous devrez donc obtenir un mot de passe et un indentifiant. Ensuite, si vous voulez implémenter un client SMTP <strong>dans un autre langage sans utiliser le module python smtplib</strong>, il va falloir les encoder en base64. Ça tombe bien, en python on a une fonction toute faite (même si ça ne nous servira pas parce que en python on a déjà la bibliothèque <code class="highlighter-rouge">smtplib</code>, c’est juste pour vous montrer. Je vous invite à en apprendre plus sur l’encodage base64 <a href="https://fr.wikipedia.org/wiki/Base64">ici</a>). Dans le code suivant, les variables <code class="highlighter-rouge">username</code> et <code class="highlighter-rouge">password</code> contiennent respectivement votre nom d’utilisateur et votre mot de passe:</p>
 
-<p><code>username_base64 = username.encode(&#39;base64&#39;)</code><br /><code>password_base64 = username.encode(&#39;base64&#39;)</code></p>
+<p><code class="highlighter-rouge">username_base64 = username.encode('base64')</code><br />
+<code class="highlighter-rouge">password_base64 = username.encode('base64')</code></p>
 
-<h1 id='3_le_module_python_smtplib'>3. Le module python smtplib</h1>
+<h1 id="le-module-python-smtplib">3. Le module python smtplib</h1>
 
-<h2 id='31_cration_de_lobjet'>3.1. Création de l&#8217;objet</h2>
+<h2 id="cration-de-lobjet">3.1. Création de l’objet</h2>
 
 <p>Il est temps de faire un peu de python !</p>
 
-<p>Vous vous en doutez, la première chose à faire est d&#8217;importer le module smtplib (normalement il est pré-installé) :</p>
+<p>Vous vous en doutez, la première chose à faire est d’importer le module smtplib (normalement il est pré-installé) :</p>
 
-<p><code>import smtplib</code></p>
+<p><code class="highlighter-rouge">import smtplib</code></p>
 
-<p>La deuxième chose à faire est de créer un objet <code>smtplib.SMTP</code>. Le constructeur peut prendre plusieurs paramètres, qui sont tous optionnels (quoique le premier soit optionnel mais&#8230; indispensable.), dans l&#8217;odre : l&#8217;adresse du serveur SMTP (vous savez, celle qui commence par <code>smtp.</code>), le port que vous utilisez, votre propre adresse IP, et le temps maximal de connexion (que j&#8217;appellerai désormais <em>timeout</em>).</p>
+<p>La deuxième chose à faire est de créer un objet <code class="highlighter-rouge">smtplib.SMTP</code>. Le constructeur peut prendre plusieurs paramètres, qui sont tous optionnels (quoique le premier soit optionnel mais… indispensable.), dans l’odre : l’adresse du serveur SMTP (vous savez, celle qui commence par <code class="highlighter-rouge">smtp.</code>), le port que vous utilisez, votre propre adresse IP, et le temps maximal de connexion (que j’appellerai désormais <em>timeout</em>).</p>
 
-<p>Vous pouvez commencer par créer un objet en précisant simplement l&#8217;adresse du serveur SMTP au constructeur, ainsi que le port 25. À la fin on exécute la méthode quit(), et on mettra le code entre les deux.</p>
+<p>Vous pouvez commencer par créer un objet en précisant simplement l’adresse du serveur SMTP au constructeur, ainsi que le port 25. À la fin on exécute la méthode <code class="highlighter-rouge">quit()</code>, et on mettra le code entre les deux.</p>
 
-<p><code>import smtplib</code></p>
+<p><code class="highlighter-rouge">import smtplib</code></p>
 
-<p><code>server = smtplib.SMTP(&#39;&lt;serveur SMTP&gt;&#39;, 25)</code><br /><code># On mettra le code ici...</code><br /><code>server.quit()</code></p>
+<p><code class="highlighter-rouge">server = smtplib.SMTP('&lt;serveur SMTP&gt;', 25)</code><br />
+<code class="highlighter-rouge"># On mettra le code ici...</code><br />
+<code class="highlighter-rouge">server.quit()</code></p>
 
-<p>Testez votre programme. Si vous obtenez une erreur <code>Connexion timed out</code>, c&#8217;est peut-être que le serveur SMTP ne propose pas d&#8217;utiliser le port 25 (sans authentification) : essayez avec le port 587 (mais il vous faudra alors forcément une authentification, revoyez le chapitre 2.3. si ça ne vous parle pas). Si ça ne fonctionne toujours pas avec toujours la même erreur, dernière solution : le port 465 avec SSL. Il vous faudra alors un objet SMTP_SSL, mais ne vous inquiétez pas, il possède exactement les mêmes méthodes que l&#8217;objet SMTP.</p>
+<p>Testez votre programme. Si vous obtenez une erreur <code class="highlighter-rouge">Connexion timed out</code>, c’est peut-être que le serveur SMTP ne propose pas d’utiliser le port 25 (sans authentification) : essayez avec le port 587 (mais il vous faudra alors forcément une authentification, revoyez le chapitre 2.3. si ça ne vous parle pas). Si ça ne fonctionne toujours pas avec toujours la même erreur, dernière solution : le port 465 avec SSL. Il vous faudra alors un objet SMTP_SSL, mais ne vous inquiétez pas, il possède exactement les mêmes méthodes que l’objet SMTP.</p>
 
-<p><code>import smtplib</code></p>
+<p><code class="highlighter-rouge">import smtplib</code></p>
 
-<p><code>server = smtplib.SMTP_SSL(&#39;&lt;serveur SMTP&gt;&#39;)</code><br /><code># On mettra le code ici...</code><br /><code>server.quit()</code></p>
+<p><code class="highlighter-rouge">server = smtplib.SMTP_SSL('&lt;serveur SMTP&gt;')</code><br />
+<code class="highlighter-rouge"># On mettra le code ici...</code><br />
+<code class="highlighter-rouge">server.quit()</code></p>
 
-<h2 id='32_cest_le_moment_de_sauthentifier'>3.2. C&#8217;est le moment de s&#8217;authentifier&#8230;</h2>
+<h2 id="cest-le-moment-de-sauthentifier">3.2. C’est le moment de s’authentifier…</h2>
 
-<p>Si vous êtes connecté sur le port 25, il est probable que vous puissiez passer cette étape. Cependant, si vous obtenez une erreur style <code>Authentication needed</code> (le texte peut changer selon le serveur), il faudra que vous reveniez ici.</p>
+<p>Si vous êtes connecté sur le port 25, il est probable que vous puissiez passer cette étape. Cependant, si vous obtenez une erreur style <code class="highlighter-rouge">Authentication needed</code> (le texte peut changer selon le serveur), il faudra que vous reveniez ici.</p>
 
-<p>Pour s&#8217;authentifier, il suffit d&#8217;utiliser la méthode <code>server.login(identifiant, mot de passe)</code>. Ils ne doivent pas être encodés en base64, la méthode <code>login</code> le fera automatiquement. Pensez bien à ajouter la ligne <strong>entre</strong> les lignes de déclaration de l&#8217;objet <code>server</code> et la ligne <code>server.quit()</code>. Maintenant, je ne le préciserai plus.</p>
+<p>Pour s’authentifier, il suffit d’utiliser la méthode <code class="highlighter-rouge">server.login(identifiant, mot de passe)</code>. Ils ne doivent pas être encodés en base64, la méthode <code class="highlighter-rouge">login</code> le fera automatiquement. Pensez bien à ajouter la ligne <strong>entre</strong> les lignes de déclaration de l’objet <code class="highlighter-rouge">server</code> et la ligne <code class="highlighter-rouge">server.quit()</code> ; maintenant, je ne le préciserai plus.</p>
 
-<h2 id='33_lentte_du_message'>3.3. L&#8217;en-tête du message</h2>
+<h2 id="len-tte-du-message">3.3. L’en-tête du message</h2>
 
-<p>Un message doit toujours commencer par une série de champs, un par ligne. Cela s&#8217;appelle l&#8217;en-tête.</p>
+<p>Un message doit toujours commencer par une série de champs, un par ligne. Cela s’appelle l’en-tête.</p>
 
-<p>Si vous ne faites pas d&#8217;en-tête, il se peut (et il est probable) que le serveur rejette votre message. Mettez au moins un en-tête <code>Date</code>, <code>Content-Type</code>, <code>Content-Transfer-Encoding</code> et <code>To</code> ; ensuite vous pourrez (et peut-être devrez) en rajouter <code>From</code>, <code>Message-ID</code>, ou encore <code>Mime-Version</code> (et j&#8217;en passe&#8230;).</p>
+<p>Si vous ne faites pas d’en-tête, il se peut (et il est probable) que le serveur rejette votre message. Mettez au moins une en-tête <code class="highlighter-rouge">Date</code>, <code class="highlighter-rouge">Content-Type</code>, <code class="highlighter-rouge">Content-Transfer-Encoding</code> et <code class="highlighter-rouge">To</code> ; ensuite vous pourrez (et peut-être devrez) en rajouter <code class="highlighter-rouge">From</code>, <code class="highlighter-rouge">Message-ID</code>, ou encore <code class="highlighter-rouge">Mime-Version</code> (et j’en passe…).</p>
 
-<p>Le format de l&#8217;en-tête <code>Date</code> doit être d&#8217;un format très particulier, que l&#8217;on peut obtenir avec :</p>
+<p>Le format de l’en-tête <code class="highlighter-rouge">Date</code> doit être d’un format très particulier, que l’on peut obtenir avec :</p>
 
-<p><code>import time</code><br /><code>f_time = time.asctime(time.localtime(time.time())).split()</code><br /><code>date = &#39;Date: &#39;+ f_time[0]+&#39;, &#39;+f_time[2]+&#39; &#39;+f_time[1]+&#39; &#39;+f_time[4]+&#39; &#39;+f_time[3]+&#39; +0100&#39; +&#39;\r\n&#39;</code></p>
+<p><code class="highlighter-rouge">import time</code><br />
+<code class="highlighter-rouge">f_time = time.asctime(time.localtime(time.time())).split()</code><br />
+<code class="highlighter-rouge">date = 'Date: '+ f_time[0]+', '+f_time[2]+' '+f_time[1]+' '+f_time[4]+' '+f_time[3]+' +0100' +'\r\n'</code></p>
 
-<p>Je vous fais ici un exemple typique d&#8217;en-tête, vous devrez remplacer les valeurs entre chevrons (&lt;&gt;) ; mais vous pouvez laisser les autres, qui sont généralement très bien.</p>
+<p>Je vous fais ici un exemple typique d’en-tête, vous devrez remplacer les valeurs entre chevrons (&lt;&gt;) ; mais vous pouvez laisser les autres, qui sont généralement très bien.</p>
 
-<p><code>header = &#39;&#39;</code><br /><code>header+=date</code><br /><code>header+=&#39;From: &lt;votre adresse e-mail&gt;\r\n&#39;</code><br /><code>header+=&#39;To: &lt;adresse e-mail du destinataire&gt;\r\n&#39;</code><br /><code>header+=&#39;Content-Type: text/plain; charset=US-ASCII\r\n&#39;</code><br /><code>header+=&#39;Content-Transfer-Encoding: 7bit\r\n&#39;</code></p>
+<p><code class="highlighter-rouge">header = ''</code><br />
+<code class="highlighter-rouge">header+=date</code><br />
+<code class="highlighter-rouge">header+='From: &lt;votre adresse e-mail&gt;\r\n'</code><br />
+<code class="highlighter-rouge">header+='To: &lt;adresse e-mail du destinataire&gt;\r\n'</code><br />
+<code class="highlighter-rouge">header+='Content-Type: text/plain; charset=US-ASCII\r\n'</code><br />
+<code class="highlighter-rouge">header+='Content-Transfer-Encoding: 7bit\r\n'</code></p>
 
-<p>Vous êtes peut-être étonnés par les <code>\r\n</code>, il s&#8217;agit simplement de caractères spéciaux permettant de signaler la fin d&#8217;une ligne.</p>
+<p>Vous êtes peut-être étonnés par les <code class="highlighter-rouge">\r\n</code>, il s’agit simplement de caractères spéciaux permettant de signaler la fin d’une ligne.</p>
 
-<h2 id='34_enfin_le_message_'>3.4. Enfin le message !</h2>
+<h2 id="enfin-le-message-">3.4. Enfin le message !</h2>
 
 <p>Vous pouvez maintenant faire votre message complet !</p>
 
-<p><code>msg = header+&#39;\r\n &lt;contenu de votre message&gt; \r\n&#39;</code></p>
+<p><code class="highlighter-rouge">msg = header+'\r\n &lt;contenu de votre message&gt; \r\n'</code></p>
 
-<h2 id='35_et_pour_finir'>3.5. Et pour finir&#8230;</h2>
+<h2 id="et-pour-finir">3.5. Et pour finir…</h2>
 
-<p>Maintenant, pour envoyer votre message, il suffit d&#8217;utiliser la méthode <code>sendmail</code> pour envoyer votre message :</p>
+<p>Maintenant, pour envoyer votre message, il suffit d’utiliser la méthode <code class="highlighter-rouge">sendmail</code> pour envoyer votre message :</p>
 
-<p><code>server.sendmail(&#39;&lt;votre adresse e-mail&gt;&#39;, &#39;&lt;adresse e-mail du destinataire&gt;&#39;, msg)</code></p>
+<p><code class="highlighter-rouge">server.sendmail('&lt;votre adresse e-mail&gt;', '&lt;adresse e-mail du destinataire&gt;', msg)</code></p>
 
-<h2 id='36_en_rsum'>3.6. En résumé</h2>
+<h2 id="en-rsum">3.6. En résumé</h2>
 
-<p>Ça commence peut-être à faire beaucoup de méthodes&#8230; Il est temps de les rassembler.</p>
+<p>Ça commence peut-être à faire beaucoup de méthodes… Il est temps de les rassembler.</p>
 
-<p><code>import smtplib
-</code>import time</p>
+<p><code class="highlighter-rouge">import smtplib</code><br />
+<code class="highlighter-rouge">import time</code></p>
 
-<p><code>server = smtplib.SMTP(&#39;&lt;serveur SMTP&gt;&#39;, 25)</code></p>
+<p><code class="highlighter-rouge">server = smtplib.SMTP('&lt;serveur SMTP&gt;', 25)</code></p>
 
-<p><code>f_time = time.asctime(time.localtime(time.time())).split()
-</code>date = &#8216;Date: &#8216;+ f_time<span>0</span>+&#8217;, &#8216;+f_time<span>2</span>+&#8217; &#8216;+f_time<span>1</span>+&#8217; &#8216;+f_time<span>4</span>+&#8217; &#8216;+f_time<span>3</span>+&#8217; +0100&#8217; +&#8217;\r\n&#8217;</p>
+<p><code class="highlighter-rouge">f_time = time.asctime(time.localtime(time.time())).split()</code><br />
+<code class="highlighter-rouge">date = 'Date: '+ f_time[0]+', '+f_time[2]+' '+f_time[1]+' '+f_time[4]+' '+f_time[3]+' +0100' +'\r\n'</code></p>
 
-<p><code>header = &#39;&#39;</code><br /><code>header+=date</code><br /><code>header+=&#39;From: &lt;votre adresse e-mail&gt;\r\n&#39;</code><br /><code>header+=&#39;To: &lt;adresse e-mail du destinataire&gt;\r\n&#39;</code><br /><code>header+=&#39;Content-Type: text/plain; charset=US-ASCII\r\n&#39;</code><br /><code>header+=&#39;Content-Transfer-Encoding: 7bit\r\n&#39;</code></p>
+<p><code class="highlighter-rouge">header = ''</code><br />
+<code class="highlighter-rouge">header+=date</code><br />
+<code class="highlighter-rouge">header+='From: &lt;votre adresse e-mail&gt;\r\n'</code><br />
+<code class="highlighter-rouge">header+='To: &lt;adresse e-mail du destinataire&gt;\r\n'</code><br />
+<code class="highlighter-rouge">header+='Content-Type: text/plain; charset=US-ASCII\r\n'</code><br />
+<code class="highlighter-rouge">header+='Content-Transfer-Encoding: 7bit\r\n'</code></p>
 
-<p><code>msg = header+&#39;\r\n &lt;contenu de votre message&gt; \r\n&#39;</code></p>
+<p><code class="highlighter-rouge">msg = header+'\r\n &lt;contenu de votre message&gt; \r\n'</code></p>
 
-<p><code>server.sendmail(&#39;&lt;votre adresse e-mail&gt;&#39;, &#39;&lt;adresse e-mail du destinataire&gt;&#39;, msg)</code></p>
+<p><code class="highlighter-rouge">server.sendmail('&lt;votre adresse e-mail&gt;', '&lt;adresse e-mail du destinataire&gt;', msg)</code></p>
 
-<p><code>server.quit()</code></p>
+<p><code class="highlighter-rouge">server.quit()</code></p>
 
-<h1 id='4_le_protocole_smtp_pour_ceux_qui_nont_pas_de_bibliothque_toute_faite_ou_pour_ceux_qui_sont_juste_curieux_p'>4. Le protocole SMTP, pour ceux qui n&#8217;ont pas de bibliothèque toute faite ou pour ceux qui sont juste curieux :p</h1>
+<h1 id="le-protocole-smtp-pour-ceux-qui-nont-pas-de-bibliothque-toute-faite-ou-pour-ceux-qui-sont-juste-curieux-p">4. Le protocole SMTP, pour ceux qui n’ont pas de bibliothèque toute faite ou pour ceux qui sont juste curieux :p</h1>
 
-<h2 id='41_la_rencontre_clientserveur'>4.1. La rencontre client/serveur</h2>
+<h2 id="la-rencontre-clientserveur">4.1. La rencontre client/serveur</h2>
 
-<p>Ce que fait le constructeur de l&#8217;objet <code>smtplib.SMTP</code> si on ne lui précise que l&#8217;adresse du serveur SMTP et le port, c&#8217;est en premier lieu se connecter. Alors, le serveur envoie normalement un message de bienvenue au client, qui commence par le code 220 s&#8217;il n&#8217;y a pas d&#8217;erreur et qui est généralement suivi d&#8217;un peu de texte.<br />Ensuite, et c&#8217;est toujours le constructeur qui s&#8217;en charge, le client envoie une commande <code>HELO</code> (pour les vieux clients) ou <code>EHLO</code> (pour les plus récents), suivie de l&#8217;adresse IP du client. La première sert juste à préciser l&#8217;adresse IP et le serveur répond avec une simple ligne commençant par le code 250, alors que la deuxième demande aussi au serveur de renvoyer la liste des extensions supportées (comme <code>STARTTLS</code> qui permet de crypter la communication, ou plus intéressant, <code>LOGIN</code>, dont nous reparlerons dans le chapitre suivant).</p>
+<p>Ce que fait le constructeur de l’objet <code class="highlighter-rouge">smtplib.SMTP</code> si on ne lui précise que l’adresse du serveur SMTP et le port, c’est en premier lieu se connecter. Alors, le serveur envoie normalement un message de bienvenue au client, qui commence par le code 220 s’il n’y a pas d’erreur et qui est généralement suivi d’un peu de texte.<br />
+Ensuite, et c’est toujours le constructeur qui s’en charge, le client envoie une commande <code class="highlighter-rouge">HELO</code> (pour les vieux clients) ou <code class="highlighter-rouge">EHLO</code> (pour les plus récents), suivie de l’adresse IP du client. La première sert juste à préciser l’adresse IP et le serveur répond avec une simple ligne commençant par le code 250, alors que la deuxième demande aussi au serveur de renvoyer la liste des extensions supportées (comme <code class="highlighter-rouge">STARTTLS</code> qui permet de crypter la communication, ou plus intéressant, <code class="highlighter-rouge">LOGIN</code>, dont nous reparlerons dans le chapitre suivant).</p>
 
-<h2 id='42_mot_de_passe_ou_on_entre_pas'>4.2. &#8220;Mot de passe ou on entre pas.&#8221;</h2>
+<h2 id="mot-de-passe-ou-on-entre-pas">4.2. “Mot de passe ou on entre pas.”</h2>
 
-<p>Si le serveur désire une authentification (et c&#8217;est son droit si on est sur le port 587), il supporte normalement l&#8217;extension <code>LOGIN AUTH</code>, <code>LOGIN PLAIN</code>, ou les deux. Si le client est connecté sur le port 587, donc, il va envoyer :</p>
+<p>Si le serveur désire une authentification (et c’est son droit si on est sur le port 587), il supporte normalement l’extension <code class="highlighter-rouge">LOGIN AUTH</code>, <code class="highlighter-rouge">LOGIN PLAIN</code>, ou les deux. Si le client est connecté sur le port 587, donc, il va envoyer :<br />
+- Soit une commande <code class="highlighter-rouge">LOGIN PLAIN</code> suivie du nom d’utilisateur, voire du nom d’utilisateur <em>et</em> du mot de passe encodés en base64 sur une seule ligne ;<br />
+- Soit une commande <code class="highlighter-rouge">LOGIN AUTH</code>, à laquelle le serveur devrait répondre par <code class="highlighter-rouge">334 VXNlcm5hbWU6</code> (ce qui veut dire “Username:” en base64), puis le client envoie son indentifiant (encodé en base64 évidemment), puis le serveur répond par <code class="highlighter-rouge">334 UGFzc3dvcmQ6</code> (ce qui veut dire “Password:” en base64), puis le client envoie son mot de passe (toujours en base64).</p>
 
-<ul>
-<li>Soit une commande <code>LOGIN PLAIN</code> suivie du nom d&#8217;utilisateur, voire du nom d&#8217;utilisateur ET du mot de passe encodés en base64 sur une seule ligne ;</li>
+<p>Le serveur envoie ensuite un message qui commence par 235 si l’authentification a réussi, ou un 535 si elle a échoué. J’espère que vous êtes dans le premier cas, car sinon vous ne pouvez pas continuer…</p>
 
-<li>Soit une commande <code>LOGIN AUTH</code>, à laquelle le serveur devrait répondre par <code>334 VXNlcm5hbWU6</code> (ce qui veut dire &#8220;Username:&#8221; en base64), puis le client envoie son indentifiant (encodé en base64 évidemment), puis le serveur répond par <code>334 UGFzc3dvcmQ6</code> (ce qui veut dire &#8220;Password:&#8221; en base64), puis le client envoie son mot de passe (toujours en base64).</li>
-</ul>
+<h2 id="de-qui-pour-qui-">4.3. De qui, pour qui ?</h2>
 
-<p>Le serveur envoie ensuite un message qui commence par 235 si l&#8217;authentification a réussi, ou un 535 si elle a échoué. J&#8217;espère que vous êtes dans le premier cas, sinons vous ne pouvez pas continuer&#8230;</p>
+<p>Le client envoie ensuite deux commandes <code class="highlighter-rouge">MAIL FROM: &lt;adresse e-mail de l'expéditeur&gt;</code> et <code class="highlighter-rouge">RCPT TO: &lt;adresse e-mail du destinataire&gt;</code> (en laissant les chevrons (&lt;&gt;) pour une fois), auxquelles le serveur répond normalement par des 250 si tout est bon.</p>
 
-<h2 id='43_de_qui_pour_qui_'>4.3. De qui, pour qui ?</h2>
+<h2 id="le-message">4.4. Le message</h2>
 
-<p>Le client envoie ensuite deux commandes <code>MAIL FROM: &lt;adresse e-mail de l&#39;expéditeur&gt;</code> et <code>RCPT TO: &lt;adresse e-mail du destinataire&gt;</code> (en laissant les chevrons (&lt;&gt;) pour une fois), auxquelles le serveur répond normalement par des 250 si tout est bon.</p>
-
-<h2 id='44_le_message'>4.4. Le message</h2>
-
-<p>Le client envoie maintenant une commande <code>DATA</code> pour signaler qu&#8217;il va envoyer le message en lui-même. Le serveur répond par un 354, et le client envoie le message, c&#8217;est-à-dire, dans l&#8217;ordre :</p>
-
-<ul>
-<li>L&#8217;en-tête</li>
-
-<li>Le corps du message</li>
-
-<li>Un point seul sur une ligne pour signaler la fin du message</li>
-</ul>
+<p>Le client envoie maintenant une commande <code class="highlighter-rouge">DATA</code> pour signaler qu’il va envoyer le message en lui-même. Le serveur répond par un 354, et le client envoie le message, c’est-à-dire, dans l’ordre :<br />
+- L’en-tête<br />
+- Le corps du message<br />
+- Un point seul sur une ligne pour signaler la fin du message</p>
 
 <p>Le serveur devrait ensuite répondre avec un 250.</p>
 
-<h2 id='45_goodbye_see_you_later_'>4.5. Good-bye, see you later !</h2>
+<h2 id="good-bye-see-you-later-">4.5. Good-bye, see you later !</h2>
 
-<p>Le client envoie un <code>QUIT</code>, le serveur répond 221, et c&#8217;est fini.</p>
+<p>Le client envoie un <code class="highlighter-rouge">QUIT</code>, le serveur répond 221, et c’est fini.</p>
 
-<h2 id='46_perspectives'>4.6. Perspectives</h2>
+<h2 id="perspectives">4.6. Perspectives</h2>
 
-<p>Avec ces informations sur le protocle SMTP, et avec éventuellement des informations complémentaires trouvées un peu partout, vous devriez être capable de créer votre propre bibliothèque SMTP ! Bien qu&#8217;il en existe déjà pour pratiquement tous les langages, je pense que ce serait intéressant.</p>
+<p>Avec ces informations sur le protocle SMTP, et avec éventuellement des informations complémentaires trouvées un peu partout, vous devriez être capable de créer votre propre bibliothèque SMTP ! Bien qu’il en existe déjà pour pratiquement tous les langages, je pense que ce serait intéressant.</p>
+
 
 		<div class="footer">
 			<p> paly2's blog. <br />

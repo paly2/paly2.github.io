@@ -164,9 +164,9 @@ Le client envoie ensuite deux commandes `MAIL FROM: <adresse e-mail de l'expédi
 ## 4.4. Le message
 
 Le client envoie maintenant une commande `DATA` pour signaler qu'il va envoyer le message en lui-même. Le serveur répond par un 354, et le client envoie le message, c'est-à-dire, dans l'ordre :  
-- L'en-tête  
-- Le corps du message  
-- Un point seul sur une ligne pour signaler la fin du message
+* L'en-tête  
+* Le corps du message  
+* Un point seul sur une ligne pour signaler la fin du message
 
 Le serveur devrait ensuite répondre avec un 250.
 

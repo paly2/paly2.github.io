@@ -51,7 +51,7 @@ On vous demande ensuite de sélectionner le disque voulu, normalement il n'y en 
 
 Vous devriez normalement lire "This is the point of no return". En vérité, sur une machine virtuelle, ce n'est pas totalement vrai, vous pourrez la supprimer et la réinstaller (ou pas). Écrivez "yes" et pressez "Entrée".
 
-On vous demande ensuite la taille du "/home", ce qui correspond au dossier où seront stockés tous les fichiers des utilisateurs (sauf `root`). Vous pouvez laisser la valeur par défaut en pressant "Entrée" (cette valeur laisse beaucoup de place au "/usr", ce qui correspond à l'endroit où sont stockés tous les programmes). Confirmez ensuite en pressant "Entrée".
+On vous demande ensuite la taille du "/home", ce qui correspond au dossier où seront stockés tous les fichiers des utilisateurs. Vous pouvez laisser la valeur par défaut en pressant "Entrée" (cette valeur laisse beaucoup de place au "/usr", ce qui correspond à l'endroit où sont stockés tous les programmes). Confirmez ensuite en pressant "Entrée".
 
 Vous devez maintenant choisir la "block size", laissez la valeur par défaut qui est très bien et soyez gentils de ne pas me demander à quoi ça correspond :>
 
