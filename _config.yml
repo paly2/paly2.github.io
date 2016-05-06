@@ -1,8 +1,8 @@
 source: .
 destination: ./_site
-safe: true
 timezone: "Europe/Paris"
 encoding: "utf-8"
 show_drafts: false
 future: true
 detach: false
+gems: [jekyll-asciidoc]
