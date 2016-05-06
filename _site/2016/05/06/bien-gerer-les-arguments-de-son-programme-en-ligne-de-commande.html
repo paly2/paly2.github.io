@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		 <meta charset="UTF-8" />
+		 <title>Bien gérer les arguments de son programme C en ligne de commande</title>
+		 <link rel="stylesheet" href="/css/asciidoctor-default.css" />
+	</head>
+	<body>
+		<h1>Bien gérer les arguments de son programme C en ligne de commande</h1>
+		
+		<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Il est souvent nécessaire de gérer des arguments en ligne de commande. Mais en C, ce n&#8217;est pas toujours facile: il faut faire des boucles encombrantes, s&#8217;embêter avec les librairies standards comme <code>&lt;string.h&gt;</code>&#8230;&#8203;<br>
+Aussi, apprenons à utiliser la petite bibliothèque <strong>ArgLib</strong>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+La bibliothèque ArgLib est écrite en C, mais elle est tout à fait compilable comme du C++ et utilisable dans un programme C++.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="1-intégration-dans-le-programme">1. Intégration dans le programme</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ArgLib se constitue de deux fichiers: <code>arglib.c</code> et <code>arglib.h</code>. Ajoutez les deux au dossier de votre programme.</p>
+</div>
+<div class="sect2">
+<h3 id="1-1-obtention-des-fichiers-sous-un-système-gnu-linux">1.1. Obtention des fichiers sous un système GNU/Linux</h3>
+<div class="paragraph">
+<p>Placez-vous dans le dossier de votre programme et exécutez:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>wget https://raw.githubusercontent.com/paly2/ArgLib/master/arglib.c
+wget https://raw.githubusercontent.com/paly2/ArgLib/master/arglib.h</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Vous pouvez aussi cloner le dépôt au moyen de git:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>sudo apt-get install git
+git clone https://github.com/paly2/ArgLib.git</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ou encore télécharger l&#8217;archive .tar.gz et l&#8217;extraire:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>wget https://github.com/paly2/ArgLib/archive/master.tar.gz
+tar zxvf master.tar.gz
+rm master.tar.gz
+mv master ArgLib</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Dans ces deux procédures, vous obtiendrez un dossier <code>ArgLib</code> qui contiendra les fichiers nécessaires, qu&#8217;il vous suffira de copier.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="1-2-obtention-des-fichiers-sous-un-système-windows">1.2. Obtention des fichiers sous un système Windows</h3>
+<div class="paragraph">
+<p>Utilisez <a href="https://github.com/paly2/ArgLib/archive/master.zip">ce lien</a> pour télécharger un fichier compressé .zip, qu&#8217;il vous suffira d&#8217;extraire pour récupérer les fichiers <code>arglib.h</code> et <code>arglib.c</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="1-3-inclusion">1.3. Inclusion</h3>
+<div class="paragraph">
+<p>Il suffit maintenant d&#8217;inclure <code>arglib.h</code> :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">#include &lt;stdio.h&gt;
+#include "arglib.h"
+
+int main(int argc, char *argv[]) {
+	/* ... */
+	return 0;
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>N&#8217;oubliez pas les arguments de la fonction <code>main</code> !</strong></p>
+</div>
+<div class="paragraph">
+<p>En effet, <code>int argc</code> et <code>char *argv[]</code> ne sont théoriquement pas obligatoires, mais ils contiennent les arguments du programme ! Ils vous sont donc indispensables.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="2-utilisation">2. Utilisation</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="2-1-savoir-si-un-argument-est-passé">2.1. Savoir si un argument est passé</h3>
+<div class="sect3">
+<h4 id="2-1-1-quelques-précisions">2.1.1. Quelques précisions</h4>
+<div class="paragraph">
+<p>Pour commencer, il faut savoir que la bibliothèque <code>ArgLib</code> partage les arguments en plusieurs catégories :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Les arguments courts cumulables;</p>
+</li>
+<li>
+<p>Les arguments courts non cumulables;</p>
+</li>
+<li>
+<p>Les arguments longs;</p>
+</li>
+<li>
+<p>Les chemins de fichiers;</p>
+</li>
+<li>
+<p>Et les autres (arguments communs).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Chacun de ces types d&#8217;argument correspond à une valeur de l&#8217;énumération <code>arg_kind</code>, en portant respectivement le nom de :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>SHORT</code></p>
+</li>
+<li>
+<p><code>SHORT_ONE</code></p>
+</li>
+<li>
+<p><code>LONG</code></p>
+</li>
+<li>
+<p><code>PATH</code></p>
+</li>
+<li>
+<p><code>COMMON</code></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Il y a aussi une valeur <code>ERROR</code> dans l&#8217;énumération <code>arg_kind</code>, que nous verrons plus tard.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Un argument court</strong> est un argument qui se compose d&#8217;une seule lettre, précédé d&#8217;un tiret.</p>
+</div>
+<div class="paragraph">
+<p>Les arguments courts peuvent être cumulés sur un même tiret&#8230;&#8203; ou pas.<br>
+Généralement, les arguments courts "non cumulables" sont ceux qui doivent être suivis d&#8217;une valeur (nous verrson plus tard comment récupérer cette valeur). Par exemple, l&#8217;argument court <code>-o</code> du célèbre compilateur <code>gcc</code> doit être suivi d&#8217;un nom de fichier, ce qui explique qu&#8217;il ne soit pas "cumulable".</p>
+</div>
+<div class="paragraph">
+<p><strong>Un argument long</strong> est un argument qui se compose de plusieurs lettre (d&#8217;un mot, en fait), précédé de deux tirets. Ces arguments ne sont jamais cumulables. Ils sont parfois équivalents à un autre argument court: par exemple, un grand nombre de commandes possèdent un argument court <code>-h</code> équivalent à un argument long <code>--help</code> (qui a pour effet d&#8217;afficher de l&#8217;aide).</p>
+</div>
+<div class="paragraph">
+<p><strong>Un chemin de fichier</strong> est un chemin d&#8217;accès à un fichier.</p>
+</div>
+<div class="paragraph">
+<p>INFO: La bibliothèque ArgLib considère qu&#8217;un argument est un chemin d&#8217;accès à un fichier uniquement si le fichier en question existe. Dans le cas contraire, l&#8217;argument sera considéré comme commun.</p>
+</div>
+<div class="paragraph">
+<p><strong>Un argument commun</strong> est un argument qui ne correspond à aucune des catégories vu précédemment.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="2-1-2-la-fonction-code-char-arg_find-char-argv-const-char-arg-const-arg_kind-kind-code">2.1.2. La fonction <code>char* arg_find(char *argv[], const char *arg, const arg_kind kind);</code></h4>
+<div class="paragraph">
+<p>Cette fonction prend trois paramètres: le tableau <code>argv</code> (rappellez-vous, c&#8217;est un argument passé à la fonction <code>main</code>), l&#8217;argument en question (celui dont on veut savoir s&#8217;il est passé), et le type d&#8217;argument (voir la section 2.1.1).<br>
+Elle retourne un pointeur sur l&#8217;argument entier où l&#8217;argument passé en second paramètre a été trouvé, ou NULL dans le cas d&#8217;une erreur.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Dans le cas d&#8217;un argument court, seul le premier caractère de la chaîne de caractère passée en second paramètre ne sera pris en compte.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Dans le cas d&#8217;un argument court ou d&#8217;un argument long, vous ne devez pas écrire le(s) tiret(s) qui précédent l&#8217;argument.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+La chaîne de caractère pointée par le pointeur retourné n&#8217;est pas forcément identique à l&#8217;argument passé en paramètre.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Vous ne pouvez pas passer le type <code>PATH</code> comme troisième paramètre.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Vous pouvez passer plusieurs types à la fonction dans le troisième paramètre, par exemple <code>LONG|COMMON</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="2-2-trouver-un-argument-qui-en-suit-un-autre">2.2. Trouver un argument qui en suit un autre</h3>
+<div class="paragraph">
+<p>Vous vous souvenez de l&#8217;exemple de l&#8217;argument <code>-o</code> de <code>gcc</code> ? Il est toujours suivi d&#8217;un autre argument. La bibliothèque ArgLib vous permet facilement d&#8217;obtenir un tel argument au moyen de la fonction <code>char* arg_followed(char *argv[], char *previous);</code>.</p>
+</div>
+<div class="paragraph">
+<p>Elle prend comme premier paramètre le tableau <code>argv</code>, et comme second paramètre l&#8217;argument précédent. Elle retourne un pointeur sur l&#8217;argument suivant.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+Le second paramètre de cette fonction <strong>doit</strong> être un pointeur retourné par la fonction <code>arg_find</code> ! Ou, au moins, un pointeur du tableau <code>argv</code>. Si vous ne le faites pas, dans le meilleur des cas, la fonction vous retournera n&#8217;importe quoi, dans le pire des cas, elle entraînera une erreur de segmentation.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="2-3-trouver-un-chemin-vers-un-fichier-dossier">2.3. Trouver un chemin vers un fichier/dossier</h3>
+<div class="paragraph">
+<p>Il existe une fonction - d&#8217;utilité limitée, certes - qui vous permet de trouver un chemin vers un fichier ou vers un dossier. J&#8217;ai nommé <code>char* arg_find_pathname(char *argv[], const int flags);</code>.</p>
+</div>
+<div class="paragraph">
+<p>Elle prend comme premier paramètre le tableau <code>argv</code>, et comme second paramètre, soit:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>arg_FILENAME</code>: L&#8217;argument correspond à un fichier.</p>
+</li>
+<li>
+<p><code>arg_DIRNAME</code>: L&#8217;argument correspond à un dossier.</p>
+</li>
+<li>
+<p><code>arg_DIRNAME|arg_FILENAME</code>: L&#8217;argument correspond à un fichier, ou à un dossier.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Elle retourne un pointeur sur le premier chemin correspondant trouvé.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="2-4-connaître-la-catégorie-d-un-argument">2.4. Connaître la "catégorie" d&#8217;un argument</h3>
+<div class="paragraph">
+<p>Parfois, il peut aussi être utile de savoir si un argument est court, long&#8230;&#8203;<br>
+Cela peut se faire au moyen de la fonction <code>arg_kind arg_how_is(const char *arg);</code>.</p>
+</div>
+<div class="paragraph">
+<p>Dans ce prototype, vous pouvez reconnaître l&#8217;énumération <code>arg_kind</code>. En effet, à partir de la chaîne de caractère qui lui est passée en argument, la fonction <code>arg_how_is</code> retourne la catégorie de l&#8217;argument (à savoir <code>SHORT</code>, <code>SHORT_ONE</code>, <code>LONG</code>, <code>PATH</code>, <code>COMMON</code>, ou encore <code>ERROR</code> dans le cas d&#8217;une erreur.</p>
+</div>
+</div>
+</div>
+</div>
+
+		<div class="footer">
+			<br />
+			<p> paly2's blog. <br />
+			Mail: <a href="mailto:plangrognet@laposte.net">plangrognet@laposte.net</a> <br />
+			GitHub: <a href="https://github.com/paly2">github.com/paly2</a>
+		</div>
+	</body>
+</html>
