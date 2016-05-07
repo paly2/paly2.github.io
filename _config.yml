@@ -6,3 +6,7 @@ show_drafts: false
 future: true
 detach: false
 gems: [jekyll-asciidoc]
+asciidoctor:
+  attributes:
+    - hardbreaks!
+    - icons=font

@@ -4,6 +4,7 @@
 		 <meta charset="UTF-8" />
 		 <title>Bien gérer les arguments de son programme C en ligne de commande</title>
 		 <link rel="stylesheet" href="/css/asciidoctor-default.css" />
+		 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css" />
 	</head>
 	<body>
 		<h1>Bien gérer les arguments de son programme C en ligne de commande</h1>
@@ -11,14 +12,14 @@
 		<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Il est souvent nécessaire de gérer des arguments en ligne de commande. Mais en C, ce n&#8217;est pas toujours facile: il faut faire des boucles encombrantes, s&#8217;embêter avec les librairies standards comme <code>&lt;string.h&gt;</code>&#8230;&#8203;<br>
+<p>Il est souvent nécessaire de gérer des arguments en ligne de commande. Mais en C, ce n&#8217;est pas toujours facile: il faut faire des boucles encombrantes, s&#8217;embêter avec les librairies standards comme <code>&lt;string.h&gt;</code>&#8230;&#8203;
 Aussi, apprenons à utiliser la petite bibliothèque <strong>ArgLib</strong>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 La bibliothèque ArgLib est écrite en C, mais elle est tout à fait compilable comme du C++ et utilisable dans un programme C++.
@@ -49,7 +50,7 @@ wget https://raw.githubusercontent.com/paly2/ArgLib/master/arglib.h</pre>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Tip</div>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 <div class="paragraph">
@@ -106,7 +107,7 @@ int main(int argc, char *argv[]) {
 <table>
 <tr>
 <td class="icon">
-<div class="title">Caution</div>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 <div class="paragraph">
@@ -177,7 +178,7 @@ int main(int argc, char *argv[]) {
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Il y a aussi une valeur <code>ERROR</code> dans l&#8217;énumération <code>arg_kind</code>, que nous verrons plus tard.
@@ -189,7 +190,7 @@ Il y a aussi une valeur <code>ERROR</code> dans l&#8217;énumération <code>arg_
 <p><strong>Un argument court</strong> est un argument qui se compose d&#8217;une seule lettre, précédé d&#8217;un tiret.</p>
 </div>
 <div class="paragraph">
-<p>Les arguments courts peuvent être cumulés sur un même tiret&#8230;&#8203; ou pas.<br>
+<p>Les arguments courts peuvent être cumulés sur un même tiret&#8230;&#8203; ou pas.
 Généralement, les arguments courts "non cumulables" sont ceux qui doivent être suivis d&#8217;une valeur (nous verrson plus tard comment récupérer cette valeur). Par exemple, l&#8217;argument court <code>-o</code> du célèbre compilateur <code>gcc</code> doit être suivi d&#8217;un nom de fichier, ce qui explique qu&#8217;il ne soit pas "cumulable".</p>
 </div>
 <div class="paragraph">
@@ -208,14 +209,14 @@ Généralement, les arguments courts "non cumulables" sont ceux qui doivent êtr
 <div class="sect3">
 <h4 id="2-1-2-la-fonction-code-char-arg_find-char-argv-const-char-arg-const-arg_kind-kind-code">2.1.2. La fonction <code>char* arg_find(char *argv[], const char *arg, const arg_kind kind);</code></h4>
 <div class="paragraph">
-<p>Cette fonction prend trois paramètres: le tableau <code>argv</code> (rappellez-vous, c&#8217;est un argument passé à la fonction <code>main</code>), l&#8217;argument en question (celui dont on veut savoir s&#8217;il est passé), et le type d&#8217;argument (voir la section 2.1.1).<br>
+<p>Cette fonction prend trois paramètres: le tableau <code>argv</code> (rappellez-vous, c&#8217;est un argument passé à la fonction <code>main</code>), l&#8217;argument en question (celui dont on veut savoir s&#8217;il est passé), et le type d&#8217;argument (voir la section 2.1.1).
 Elle retourne un pointeur sur l&#8217;argument entier où l&#8217;argument passé en second paramètre a été trouvé, ou NULL dans le cas d&#8217;une erreur.</p>
 </div>
 <div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Dans le cas d&#8217;un argument court, seul le premier caractère de la chaîne de caractère passée en second paramètre ne sera pris en compte.
@@ -227,7 +228,7 @@ Dans le cas d&#8217;un argument court, seul le premier caractère de la chaîne 
 <table>
 <tr>
 <td class="icon">
-<div class="title">Caution</div>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 Dans le cas d&#8217;un argument court ou d&#8217;un argument long, vous ne devez pas écrire le(s) tiret(s) qui précédent l&#8217;argument.
@@ -239,7 +240,7 @@ Dans le cas d&#8217;un argument court ou d&#8217;un argument long, vous ne devez
 <table>
 <tr>
 <td class="icon">
-<div class="title">Important</div>
+<i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
 La chaîne de caractère pointée par le pointeur retourné n&#8217;est pas forcément identique à l&#8217;argument passé en paramètre.
@@ -251,7 +252,7 @@ La chaîne de caractère pointée par le pointeur retourné n&#8217;est pas forc
 <table>
 <tr>
 <td class="icon">
-<div class="title">Caution</div>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 Vous ne pouvez pas passer le type <code>PATH</code> comme troisième paramètre.
@@ -263,7 +264,7 @@ Vous ne pouvez pas passer le type <code>PATH</code> comme troisième paramètre.
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Vous pouvez passer plusieurs types à la fonction dans le troisième paramètre, par exemple <code>LONG|COMMON</code>.
@@ -285,7 +286,7 @@ Vous pouvez passer plusieurs types à la fonction dans le troisième paramètre,
 <table>
 <tr>
 <td class="icon">
-<div class="title">Warning</div>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
 Le second paramètre de cette fonction <strong>doit</strong> être un pointeur retourné par la fonction <code>arg_find</code> ! Ou, au moins, un pointeur du tableau <code>argv</code>. Si vous ne le faites pas, dans le meilleur des cas, la fonction vous retournera n&#8217;importe quoi, dans le pire des cas, elle entraînera une erreur de segmentation.
@@ -322,7 +323,7 @@ Le second paramètre de cette fonction <strong>doit</strong> être un pointeur r
 <div class="sect2">
 <h3 id="2-4-connaître-la-catégorie-d-un-argument">2.4. Connaître la "catégorie" d&#8217;un argument</h3>
 <div class="paragraph">
-<p>Parfois, il peut aussi être utile de savoir si un argument est court, long&#8230;&#8203;<br>
+<p>Parfois, il peut aussi être utile de savoir si un argument est court, long&#8230;&#8203;
 Cela peut se faire au moyen de la fonction <code>arg_kind arg_how_is(const char *arg);</code>.</p>
 </div>
 <div class="paragraph">
