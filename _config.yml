@@ -5,7 +5,8 @@ encoding: "utf-8"
 show_drafts: false
 future: true
 detach: false
-gems: [jekyll-asciidoc]
+gems:
+  - jekyll-asciidoc
 asciidoctor:
   attributes:
     - hardbreaks!
