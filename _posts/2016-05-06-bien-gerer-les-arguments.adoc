@@ -38,9 +38,9 @@ mv master ArgLib
 Dans ces deux procédures, vous obtiendrez un dossier `ArgLib` qui contiendra les fichiers nécessaires, qu'il vous suffira de copier.
 ====
 
-=== 1.2. Obtention des fichiers sous un système Windows
+=== 1.2. Obtention des fichiers sous un système Microsoft Windows
 
-Utilisez https://github.com/paly2/ArgLib/archive/master.zip[ce lien] pour télécharger un fichier compressé .zip, qu'il vous suffira d'extraire pour récupérer les fichiers `arglib.h` et `arglib.c`.
+IMPORTANT: La bibliothèque ArgLib n'est pas conçue pour le moment pour Windows. Il est probable qu'elle ne compilera pas sous ce système en raison de l'utilisation du header `<sys/stat.h>` ; de plus, les types d'arguments qu'elle utilise sont une convention surtout retrouvée chez UNIX. Par conséquent, si vous utilisez Windows, passez à GNU/Linux, et vous vous remercierez vous-même !
 
 === 1.3. Inclusion
 
@@ -97,7 +97,7 @@ Généralement, les arguments courts "non cumulables" sont ceux qui doivent êtr
 
 *Un chemin de fichier* est un chemin d'accès à un fichier.
 
-INFO: La bibliothèque ArgLib considère qu'un argument est un chemin d'accès à un fichier uniquement si le fichier en question existe. Dans le cas contraire, l'argument sera considéré comme commun.
+NOTE: La bibliothèque ArgLib considère qu'un argument est un chemin d'accès à un fichier uniquement si le fichier en question existe. Dans le cas contraire, l'argument sera considéré comme commun.
 
 *Un argument commun* est un argument qui ne correspond à aucune des catégories vu précédemment.
 
@@ -114,7 +114,7 @@ IMPORTANT: La chaîne de caractère pointée par le pointeur retourné n'est pas
 
 CAUTION: Vous ne pouvez pas passer le type `PATH` comme troisième paramètre.
 
-NOTE: Vous pouvez passer plusieurs types à la fonction dans le troisième paramètre, par exemple `LONG|COMMON`.
+TIP: Vous pouvez passer plusieurs types à la fonction dans le troisième paramètre, par exemple `LONG|COMMON`.
 
 === 2.2. Trouver un argument qui en suit un autre
 
