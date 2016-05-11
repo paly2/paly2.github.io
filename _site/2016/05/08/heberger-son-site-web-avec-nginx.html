@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		 <meta charset="UTF-8" />
+		 <title>Héberger son site Web chez sois avec le serveur HTTP nginx</title>
+		 <link rel="stylesheet" href="/css/asciidoctor-default.css" />
+		 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css" />
+	</head>
+	<body>
+		<h1>Héberger son site Web chez sois avec le serveur HTTP nginx</h1>
+		
+		<div class="sect1">
+<h2 id="1-pourquoi-nginx">1. Pourquoi nginx ?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nginx (si quelqu&#8217;un sait comment le prononcer, je l&#8217;invite à m&#8217;en faire part au moyen de l&#8217;adresse e-mail indiquée dans le pied-de-page) est le serveur HTTP que je vous propose d&#8217;utiliser, en raison de ses incroyables performances.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Nginx est difficile à mettre en place.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>On entend parfois cette phrase, ce qui rebute certains à l&#8217;utiliser (qui finissent avec un Apache dévorreur de RAM). Comme vous allez pouvoir vous en rendre compte au cours de ce tutoriel, c&#8217;est faux.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="2-situation-de-départ">2. Situation de départ</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>À ce stade, j&#8217;estime que vous avez :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Un PC serveur avec un système d&#8217;exploitation Debian,</p>
+</li>
+<li>
+<p>Un site web tout frais tout chaud qui n&#8217;attend que d&#8217;être servi quelque part sur votre PC serveur,</p>
+</li>
+<li>
+<p>Un minimum de connaissances en systèmes UNIX.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+L&#8217;ensemble du tutoriel est fait sous Debian. Il n&#8217;a pas été testé sous Ubuntu ou sous Raspbian ; cependant, comme il s&#8217;agit de dérivées de Debian, je suppose que ce tutoriel peut tout à fait s&#8217;y appliquer - éventuellement au prix de changements minimes. Par contre, n&#8217;espérez pas l&#8217;utiliser pour un système Microsoft Windows.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="3-mise-en-place-de-nginx">3. Mise en place de nginx</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Toutes les actions de cette section doivent être exécutées sur le PC serveur.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="3-1-installation">3.1. Installation</h3>
+<div class="paragraph">
+<p>Difficile de faire plus simple:
+&#8230;&#8203;
+# apt-get install nginx
+&#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>Ensuite, rendez-vous à <a href="http://localhost">cette adresse</a> (toujours depuis le PC serveur!), et vérifiez que vous n&#8217;obtenez pas d&#8217;erreur - et que vous voyez une page qui vous informe que nginx a correctement été installé.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="3-2-configuration">3.2. Configuration</h3>
+<div class="paragraph">
+<p>Les fichiers de configuration de nginx doivent normallement se trouver dans /etc/nginx. Si ce dossier n&#8217;existe pas, essayez /usr/local/nginx(/conf) ou encore /usr/local/etc/nginx.</p>
+</div>
+<div class="paragraph">
+<p>Placez-vous dans ce dossier et exécutez la commande <code>ls</code>. Parmi la liste retournée, vérifiez que le dossier sites-enabled s&#8217;y trouve, et entrez-y d&#8217;un coup de <code>cd sites-enablds</code>. Exécutez à nouveau <code>ls</code>.</p>
+</div>
+<div class="paragraph">
+<p>Et là, normallement, ô bonheur, un exemple de configuration s&#8217;y trouve déjà: le fichier <code>default</code> !
+Copiez-le avec un nom plus parlant pour vous (par exemple <code>cp default my_website</code>). Vous pouvez ensuite déplacer le fichier default (voire le supprimer, vu que vous devriez avoir une copie dans site-availables/default) ; en tous cas, ne le laissez pas dans sites-enabled.</p>
+</div>
+<div class="paragraph">
+<p>Éditez maintenant votre nouveau fichier avec votre éditeur préféré.
+Cherchez la ligne <code>root /var/www/html;</code>, et remplacez <code>/var/www/html</code> par l&#8217;emplacement de votre site web.
+Cherchez aussi la ligne <code>server_name <em>;</code>, et remplacez <code></em></code> par l&#8217;adresse de votre site (c&#8217;est optionnel mais recommandé).</p>
+</div>
+<div class="paragraph">
+<p>Finalement, exécutez:
+&#8230;&#8203;
+# nginx -s reload
+&#8230;&#8203;
+Pour recharger les fichiers de configuration. Revenez à <a href="http://localhost">cette adresse</a> et&#8230;&#8203; magie ! Votre site web s&#8217;y affiche !</p>
+</div>
+<div class="paragraph">
+<p>Voilà, c&#8217;est finit avec la configuration de nginx. Quand je vous disais que ce n&#8217;était pas difficile.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="4-configuration-du-réseau">4. Configuration du réseau</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="4-1-donner-à-votre-pc-serveur-une-ip-locale-statique">4.1. Donner à votre PC serveur une IP locale statique</h3>
+<div class="paragraph">
+<p>Alors maintenant ça marche très bien en localhost, mais si vous voulez accéder à votre ordinateur dans votre réseau local de façon fiable et statique (c&#8217;est-à-dire que son IP ne change pas (qu&#8217;il n&#8217;utilise pas le DHCP)), il va falloir toucher au fichier de configuration <code>/etc/network/interfaces</code> - que vous pouvez vous empresser d&#8217;ouvrir avec votre éditeur de texte préféré.</p>
+</div>
+<div class="paragraph">
+<p>Cherchez une ligne qui ressemble à:
+&#8230;&#8203;
+iface eth0 inet dhcp
+&#8230;&#8203;
+IMPORTANT: <code>eth0</code> peut être remplacé par <code>eth1</code> ou autre <code>ethX</code> si vous n&#8217;utilisez pas le premier port Ethernet. En revanche, pour un serveur, il est fortement déconseillé d&#8217;utiliser une connexion WiFi: faites donc attention aux <code>wlan0</code>, <code>wlan1</code>, etc.</p>
+</div>
+<div class="paragraph">
+<p>Et remplacez là par tout ce bloc:
+&#8230;&#8203;
+iface eth0 inet static
+address 192.168.1.101
+netmask 255.255.255.0
+gateway 192.168.1.1
+&#8230;&#8203;
+TIP: Ici je vous fait utiliser l&#8217;adresse statique 192.168.1.101, parce que généralement les IP DHCP sont attribuées de 192.168.1.2 à 192.168.1.100. Mais rien ne vous empêche de choisir autre chose! De même, l&#8217;adresse de la gateway (votre routeur) est ici 192.168.1.1, mais dans un réseau complexe il peut s&#8217;agir de quelque chose de complètement différent (enfin, dites-vous que si vous n&#8217;avez aucune idée de que la gateway pourrait être, c&#8217;est que c&#8217;est très certainement 192.168.1.1). Même chose pour le netmask (masque de sous-réseau)&#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>Puis exécutez:
+&#8230;&#8203;
+sudo /etc/init.d/networking restart
+&#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>Maintenant, vous pouvez accéder à votre serveur n&#8217;importe où depuis votre réseau local, en utilisant le lien <a href="http://192.168.1.101" class="bare">http://192.168.1.101</a> !</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="4-2-rediriger-les-requêtes-sur-le-port-80-en-provenance-de-l-extérieur-vers-votre-serveur">4.2. Rediriger les requêtes sur le port 80 en provenance de l&#8217;extérieur vers votre serveur</h3>
+<div class="paragraph">
+<p>Rendez-vous, depuis votre réseau local, à <a href="http://192.168.1.1">l&#8217;adresse gateway</a>. Normalement, vous obtenez la page de configuration du routeur.</p>
+</div>
+<div class="paragraph">
+<p>Il va falloir que vous vous débrouilliez pour rediriger les requêtes sur le port 80 en provenance de l&#8217;extérieur vers votre serveur (donc si vous avez utilisé la configuration d&#8217;IP statique de la section précédente, vers la machine à l&#8217;adresse 192.168.1.101).</p>
+</div>
+<div class="paragraph">
+<p>Pour faire cela, la procédure diffère selon les routeurs. Vous pouvez faire une recherche sur le Web pour l&#8217;obtenir. Généralement, vous devez chercher un onglet NAT.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="5-fin-et-suite">5. Fin et suite</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Maintenant, votre site est accessible de partout au moyen de votre adresse IP.</p>
+</div>
+<div class="paragraph">
+<p>Je comprendrais tout à fait que vous ne vous contentiez pas de votre adresse IP, et que vous aimeriez un nom de domaine - surtout si celle-ci est dynamique. Mais cela dépasse les ambitions de ce petit tutoriel, qui était simplement censé expliquer comment configurer nginx.
+Cependant, je vous laisse quelques liens qui pourront vous aider:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://noip.com" class="bare">https://noip.com</a> : pour obtenir un DNS dynamique gratuit avec un sous-domaine et/ou un vrai nom de domaine (payant).</p>
+</li>
+<li>
+<p><a href="https://www.gandi.net" class="bare">https://www.gandi.net</a> : pour obtenir un nom de domaine (payant).</p>
+</li>
+<li>
+<p><a href="http://www.dot.tk" class="bare">http://www.dot.tk</a> : pour obtenir un vrai nom de domaine gratuit en .tk.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+		
+	</body>
+	<footer>
+		<p> <br /> paly2's blog. <br />
+			Mail: <a href="mailto:plangrognet@laposte.net">plangrognet@laposte.net</a> <br />
+			GitHub: <a href="https://github.com/paly2">github.com/paly2</a> <br />
+			Star us on GitHub! <a href="https://github.com/paly2/paly2.github.io">github.com/paly2/paly2.github.io</a>
+		</p>
+	</footer>
+</html>
