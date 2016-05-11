@@ -7,6 +7,10 @@
 		 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css" />
 	</head>
 	<body>
+		<nav>
+			<p>&laquo; <a href="/">Index page</a></p>
+		</nav>
+		
 		<h1>Héberger son site Web chez sois avec le serveur HTTP nginx</h1>
 		
 		<div class="sect1">
@@ -78,10 +82,12 @@ Toutes les actions de cette section doivent être exécutées sur le PC serveur.
 <div class="sect2">
 <h3 id="3-1-installation">3.1. Installation</h3>
 <div class="paragraph">
-<p>Difficile de faire plus simple:
-&#8230;&#8203;
-# apt-get install nginx
-&#8230;&#8203;</p>
+<p>Difficile de faire plus simple:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># apt-get install nginx</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Ensuite, rendez-vous à <a href="http://localhost">cette adresse</a> (toujours depuis le PC serveur!), et vérifiez que vous n&#8217;obtenez pas d&#8217;erreur - et que vous voyez une page qui vous informe que nginx a correctement été installé.</p>
@@ -105,11 +111,15 @@ Cherchez la ligne <code>root /var/www/html;</code>, et remplacez <code>/var/www/
 Cherchez aussi la ligne <code>server_name <em>;</code>, et remplacez <code></em></code> par l&#8217;adresse de votre site (c&#8217;est optionnel mais recommandé).</p>
 </div>
 <div class="paragraph">
-<p>Finalement, exécutez:
-&#8230;&#8203;
-# nginx -s reload
-&#8230;&#8203;
-Pour recharger les fichiers de configuration. Revenez à <a href="http://localhost">cette adresse</a> et&#8230;&#8203; magie ! Votre site web s&#8217;y affiche !</p>
+<p>Finalement, exécutez:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># nginx -s reload</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Pour recharger les fichiers de configuration. Revenez à <a href="http://localhost">cette adresse</a> et&#8230;&#8203; magie ! Votre site web s&#8217;y affiche !</p>
 </div>
 <div class="paragraph">
 <p>Voilà, c&#8217;est finit avec la configuration de nginx. Quand je vous disais que ce n&#8217;était pas difficile.</p>
@@ -126,27 +136,55 @@ Pour recharger les fichiers de configuration. Revenez à <a href="http://localho
 <p>Alors maintenant ça marche très bien en localhost, mais si vous voulez accéder à votre ordinateur dans votre réseau local de façon fiable et statique (c&#8217;est-à-dire que son IP ne change pas (qu&#8217;il n&#8217;utilise pas le DHCP)), il va falloir toucher au fichier de configuration <code>/etc/network/interfaces</code> - que vous pouvez vous empresser d&#8217;ouvrir avec votre éditeur de texte préféré.</p>
 </div>
 <div class="paragraph">
-<p>Cherchez une ligne qui ressemble à:
-&#8230;&#8203;
-iface eth0 inet dhcp
-&#8230;&#8203;
-IMPORTANT: <code>eth0</code> peut être remplacé par <code>eth1</code> ou autre <code>ethX</code> si vous n&#8217;utilisez pas le premier port Ethernet. En revanche, pour un serveur, il est fortement déconseillé d&#8217;utiliser une connexion WiFi: faites donc attention aux <code>wlan0</code>, <code>wlan1</code>, etc.</p>
+<p>Cherchez une ligne qui ressemble à:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>iface eth0 inet dhcp</pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<code>eth0</code> peut être remplacé par <code>eth1</code> ou autre <code>ethX</code> si vous n&#8217;utilisez pas le premier port Ethernet. En revanche, pour un serveur, il est fortement déconseillé d&#8217;utiliser une connexion WiFi: faites donc attention aux <code>wlan0</code>, <code>wlan1</code>, etc.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Et remplacez là par tout ce bloc:
-&#8230;&#8203;
-iface eth0 inet static
+<p>Et remplacez-la par tout ce bloc:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>iface eth0 inet static
 address 192.168.1.101
 netmask 255.255.255.0
-gateway 192.168.1.1
-&#8230;&#8203;
-TIP: Ici je vous fait utiliser l&#8217;adresse statique 192.168.1.101, parce que généralement les IP DHCP sont attribuées de 192.168.1.2 à 192.168.1.100. Mais rien ne vous empêche de choisir autre chose! De même, l&#8217;adresse de la gateway (votre routeur) est ici 192.168.1.1, mais dans un réseau complexe il peut s&#8217;agir de quelque chose de complètement différent (enfin, dites-vous que si vous n&#8217;avez aucune idée de que la gateway pourrait être, c&#8217;est que c&#8217;est très certainement 192.168.1.1). Même chose pour le netmask (masque de sous-réseau)&#8230;&#8203;</p>
+gateway 192.168.1.1</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Ici je vous fait utiliser l&#8217;adresse statique 192.168.1.101, parce que généralement les IP DHCP sont attribuées de 192.168.1.2 à 192.168.1.100. Mais rien ne vous empêche de choisir autre chose! De même, l&#8217;adresse de la gateway (votre routeur) est ici 192.168.1.1, mais dans un réseau complexe il peut s&#8217;agir de quelque chose de complètement différent (enfin, dites-vous que si vous n&#8217;avez aucune idée de que la gateway pourrait être, c&#8217;est que c&#8217;est très certainement 192.168.1.1). Même chose pour le netmask (masque de sous-réseau)&#8230;&#8203;
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Puis exécutez:
-&#8230;&#8203;
-sudo /etc/init.d/networking restart
-&#8230;&#8203;</p>
+<p>Puis exécutez:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>sudo /etc/init.d/networking restart</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Maintenant, vous pouvez accéder à votre serveur n&#8217;importe où depuis votre réseau local, en utilisant le lien <a href="http://192.168.1.101" class="bare">http://192.168.1.101</a> !</p>
@@ -192,12 +230,12 @@ Cependant, je vous laisse quelques liens qui pourront vous aider:</p>
 </div>
 </div>
 		
+		<footer>
+			<p> <br /> paly2's blog. <br />
+				Mail: <a href="mailto:plangrognet@laposte.net">plangrognet@laposte.net</a> <br />
+				GitHub: <a href="https://github.com/paly2">github.com/paly2</a> <br />
+				Star us on GitHub! <a href="https://github.com/paly2/paly2.github.io">github.com/paly2/paly2.github.io</a>
+			</p>
+		</footer>		
 	</body>
-	<footer>
-		<p> <br /> paly2's blog. <br />
-			Mail: <a href="mailto:plangrognet@laposte.net">plangrognet@laposte.net</a> <br />
-			GitHub: <a href="https://github.com/paly2">github.com/paly2</a> <br />
-			Star us on GitHub! <a href="https://github.com/paly2/paly2.github.io">github.com/paly2/paly2.github.io</a>
-		</p>
-	</footer>
 </html>
