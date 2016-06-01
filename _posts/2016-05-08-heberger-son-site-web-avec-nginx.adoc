@@ -1,14 +1,14 @@
 ---
 layout: post
-title: Héberger son site Web chez sois avec le serveur HTTP nginx
+title: Héberger son site Web chez soi avec le serveur HTTP nginx
 ---
 
-= Héberger son site Web chez sois avec le serveur HTTP nginx
+= Héberger son site Web chez soi avec le serveur HTTP nginx
 Beaucoup d'entre vous veulent certainement héberger leur site web sur leur propre serveur. Nous allons voir ici comment procéder.
 
 == 1. Pourquoi nginx ?
 
-Nginx (si quelqu'un sait comment le prononcer, je l'invite à m'en faire part au moyen de l'adresse e-mail indiquée dans le pied-de-page) est le serveur HTTP que je vous propose d'utiliser, en raison de ses incroyables performances.
+Nginx (prononcer "engine X") est le serveur HTTP que je vous propose d'utiliser, en raison de ses incroyables performances.
 
 ____
 Nginx est difficile à mettre en place.
@@ -50,7 +50,7 @@ Copiez-le avec un nom plus parlant pour vous (par exemple `cp default my_website
 
 Éditez maintenant votre nouveau fichier avec votre éditeur préféré.
 Cherchez la ligne `root /var/www/html;`, et remplacez `/var/www/html` par l'emplacement de votre site web.
-Cherchez aussi la ligne `server_name __;`, et remplacez `__` par l'adresse de votre site (c'est optionnel mais recommandé).
+Cherchez aussi la ligne `server_name`, et remplacez `___` par l'adresse de votre site (c'est optionnel mais recommandé).
 
 Finalement, exécutez:
 ....
