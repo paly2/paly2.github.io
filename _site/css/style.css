@@ -1,0 +1,35 @@
+body {
+	margin-left:70px;
+	margin-right:70px;
+}
+h2 {
+	margin-left:20px;
+}
+h3 {
+	margin-left:40px;
+}
+h4 {
+	margin-left:60px;
+}
+nav {
+  padding-left: 0;
+  margin: 20px 0;
+  text-align: center;
+  list-style: none;
+}
+nav li {
+  display: inline;
+  float: left;
+}
+nav li > a {
+  display: inline-block;
+  padding: 5px 14px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+}
+nav li > a:hover,
+nav li > a:focus {
+  text-decoration: none;
+  background-color: #eee;
+}
